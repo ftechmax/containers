@@ -2,9 +2,9 @@ name: Merge
 
 on:
   push:
-    branches: [main, add-oobabooga]
-    # paths:
-    #   - 'oobabooga/**'
+    branches: [main]
+    paths:
+      - 'oobabooga/**'
 
 jobs:
   build:
