@@ -3,8 +3,8 @@ name: Merge
 on:
   push:
     branches: [main, add-oobabooga]
-    paths:
-      - 'oobabooga/**'
+    # paths:
+    #   - 'oobabooga/**'
 
 jobs:
   build:
