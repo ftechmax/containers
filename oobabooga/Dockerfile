@@ -1,5 +1,6 @@
 # start from runpod pytorch container
-ARG BASE_IMAGE=runpod/pytorch:3.10-1.13.1-116
+#ARG BASE_IMAGE=runpod/pytorch:3.10-1.13.1-116
+ARG BASE_IMAGE=runpod/pytorch:3.10-2.0.1-118-devel
 
 FROM ${BASE_IMAGE} as dev-base
 
