@@ -6,7 +6,6 @@ FROM ${BASE_IMAGE} as dev-base
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND noninteractive\
-
 SHELL=/bin/bash
 
 RUN apt-key del 7fa2af80
@@ -19,6 +18,7 @@ RUN apt-get update --yes && \
     wget\
     bash\
     rsync\
+    python3-dev\
     openssh-server &&\
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 RUN /usr/bin/python3 -m pip install --upgrade pip
