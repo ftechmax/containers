@@ -28,14 +28,14 @@ RUN pip install ipywidgets
 RUN cd /workspace && git clone https://github.com/oobabooga/text-generation-webui.git && \
     cd /workspace/text-generation-webui && pip install -r requirements.txt
 
-# install GPTQ-for-LLaMa
-RUN cd /workspace/text-generation-webui && mkdir repositories && cd repositories && \
-    git clone https://github.com/oobabooga/GPTQ-for-LLaMa.git -b cuda && \
-    cd GPTQ-for-LLaMa && \
-    pip install -r requirements.txt && \
-    # fix accelerate version being too old
-    pip install accelerate==0.19.0 && \
-    python setup_cuda.py install
+# # install GPTQ-for-LLaMa
+# RUN cd /workspace/text-generation-webui && mkdir repositories && cd repositories && \
+#     git clone https://github.com/oobabooga/GPTQ-for-LLaMa.git -b cuda && \
+#     cd GPTQ-for-LLaMa && \
+#     pip install -r requirements.txt && \
+#     # fix accelerate version being too old
+#     pip install accelerate==0.20.3 && \
+#     python setup_cuda.py install
 
 ADD start_chatbot_server.sh /workspace/text-generation-webui/
 ADD start_textgen_server.sh /workspace/text-generation-webui/
