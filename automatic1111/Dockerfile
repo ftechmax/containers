@@ -17,7 +17,6 @@ COPY install-automatic.py .
 COPY assets/models /sd-models/
 COPY assets/embeddings /sd-embeddings/
 COPY assets/controlnet /cn-models/
-#COPY --from=models control_v11p_sd15_canny.pth /cn-models/control_v11p_sd15_canny.pth
 #COPY requirements_dreambooth.txt /requirements_dreambooth.txt
 
 COPY requirements.txt /requirements.txt
@@ -55,9 +54,8 @@ ln -s /usr/bin/python3.10 /usr/bin/python && \
 rm /usr/bin/python3 && \
 ln -s /usr/bin/python3.10 /usr/bin/python3 && \
 curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \python get-pip.py && \ 
-pip install -U --no-cache-dir pip
-
-RUN python -m venv /workspace/venv && \
+pip install -U --no-cache-dir pip && \
+python -m venv /workspace/venv && \
 export PATH="/workspace/venv/bin:$PATH" && \
 pip install -U --no-cache-dir jupyterlab jupyterlab_widgets ipykernel ipywidgets && \
 git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
@@ -92,9 +90,6 @@ pip cache purge && \
 apt clean && \
 mv /workspace/venv /venv && \
 mv /workspace/stable-diffusion-webui /stable-diffusion-webui
-
-# COPY --from=models SDv1-5.ckpt /sd-models/SDv1-5.ckpt
-# COPY --from=models control_v11p_sd15_canny.pth /cn-models/control_v11p_sd15_canny.pth
 
 COPY pre_start.sh /pre_start.sh
 COPY relauncher.py webui-user.sh /stable-diffusion-webui/
