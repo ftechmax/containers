@@ -13,9 +13,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 WORKDIR /
 
 # Install Ubuntu packages
-RUN apt update && \
-    apt -y upgrade && \
-    apt install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get install -y --no-install-recommends \
         build-essential \
         software-properties-common \
         python3.10-venv \
@@ -56,7 +56,7 @@ RUN apt update && \
         apt-transport-https \
         ca-certificates && \
     update-ca-certificates && \
-    apt clean && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen
 
@@ -67,13 +67,26 @@ RUN ln -s /usr/bin/python3.10 /usr/bin/python
 RUN pip3 install --no-cache-dir torch==2.0.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
     pip3 install --no-cache-dir xformers==0.0.22 tensorrt
 
-# Stage 2: Install applications
-FROM base as setup
+# # Stage 2: Install applications
+# FROM base as setup
+
+WORKDIR /
+
+RUN mkdir -p /sd-models
+
+# Add SDXL models and VAE
+# These need to already have been downloaded:
+#   wget https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors
+#   wget https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors
+#   wget https://huggingface.co/madebyollin/sdxl-vae-fp16-fix/resolve/main/sdxl_vae.safetensors
+#COPY sd_xl_base_1.0.safetensors /sd-models/sd_xl_base_1.0.safetensors
+#COPY sd_xl_refiner_1.0.safetensors /sd-models/sd_xl_refiner_1.0.safetensors
+#COPY sdxl_vae.safetensors /sd-models/sdxl_vae.safetensors
 
 # Install Kohya_ss
 RUN git clone https://github.com/bmaltais/kohya_ss.git /kohya_ss
 WORKDIR /kohya_ss
-COPY kohya_ss/requirements* ./
+#COPY kohya_ss/requirements* ./
 RUN git checkout ${KOHYA_VERSION} && \
     python3 -m venv --system-site-packages venv && \
     source venv/bin/activate && \
@@ -89,6 +102,11 @@ RUN git checkout ${KOHYA_VERSION} && \
     pip3 install . && \
     pip3 cache purge && \
     deactivate
+# from requirements_runpod.txt
+# torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118 # no_verify leave this to specify not checking this a verification stage
+# xformers==0.0.21 bitsandbytes==0.41.1
+# tensorboard==2.14.1 tensorflow==2.14.0 wheel
+# tensorrt
 
 # # Install Application Manager
 # WORKDIR /
@@ -112,23 +130,12 @@ RUN wget https://github.com/runpod/runpodctl/releases/download/v1.10.0/runpodctl
     chmod a+x runpodctl && \
     mv runpodctl /usr/local/bin
 
-# # Install croc
-# RUN curl https://getcroc.schollz.com | bash
+# Install croc
+RUN curl https://getcroc.schollz.com | bash
 
 # # Install speedtest CLI
 # RUN curl -s https://packagecloud.io/install/repositories/ookla/speedtest-cli/script.deb.sh | bash && \
-#     apt install speedtest
-
-# # RUN mkdir -p /sd-models
-
-# # # Add SDXL models and VAE
-# # # These need to already have been downloaded:
-# # #   wget https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors
-# # #   wget https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors
-# # #   wget https://huggingface.co/madebyollin/sdxl-vae-fp16-fix/resolve/main/sdxl_vae.safetensors
-# # COPY sd_xl_base_1.0.safetensors /sd-models/sd_xl_base_1.0.safetensors
-# # COPY sd_xl_refiner_1.0.safetensors /sd-models/sd_xl_refiner_1.0.safetensors
-# # COPY sdxl_vae.safetensors /sd-models/sdxl_vae.safetensors
+#     apt-get install speedtest
 
 # NGINX Proxy
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
@@ -140,8 +147,8 @@ WORKDIR /
 # Copy the scripts
 COPY --chmod=755 scripts/* ./
 
-# Copy the accelerate configuration
-COPY kohya_ss/accelerate.yaml ./
+## Copy the accelerate configuration
+#COPY kohya_ss/accelerate.yaml ./
 
 # Start the container
 SHELL ["/bin/bash", "--login", "-c"]

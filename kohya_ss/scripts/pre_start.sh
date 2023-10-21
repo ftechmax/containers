@@ -3,23 +3,24 @@ export PYTHONUNBUFFERED=1
 
 echo "Container is running"
 
-# Sync venv to workspace to support Network volumes
-echo "Syncing venv to workspace, please wait..."
-rsync -au /venv/ /workspace/venv/
-rm -rf /venv
+# # Sync venv to workspace to support Network volumes
+# echo "Syncing venv to workspace, please wait..."
+# rsync -au /venv/ /workspace/venv/
+# rm -rf /venv
 
 # Sync Kohya_ss to workspace to support Network volumes
 echo "Syncing Kohya_ss to workspace, please wait..."
+mkdir -p /workspace/kohya_ss
 rsync -au /kohya_ss/ /workspace/kohya_ss/
 rm -rf /kohya_ss
 
 echo "Fixing Kohya_ss venv..."
 /fix_venv.sh /kohya_ss/venv /workspace/kohya_ss/venv
 
-# Configure accelerate
-echo "Configuring accelerate..."
-mkdir -p /root/.cache/huggingface/accelerate
-mv /accelerate.yaml /root/.cache/huggingface/accelerate/default_config.yaml
+# # Configure accelerate
+# echo "Configuring accelerate..."
+# mkdir -p /root/.cache/huggingface/accelerate
+# mv /accelerate.yaml /root/.cache/huggingface/accelerate/default_config.yaml
 
 # Create logs directory
 mkdir -p /workspace/logs
